@@ -1,0 +1,82 @@
+---
+title: "Young_DSC 640_Assignment 1.2_R"
+author: "Bret Young"
+date: "9/9/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    fig.align='center',
+    fig.pos='H',
+    fig.path = "plots/",
+    dev = c("png"),
+    dpi=500
+)
+```
+
+```{r}
+# load library needed for Excel files
+library(readxl)
+
+# load data
+file = 'world-population.xlsm'
+data = read_xlsx(file, col_names = TRUE)
+```
+
+
+```{r}
+# Print data
+head(data)
+```
+
+```{r}
+# Load library for plotting data
+library(ggplot2)
+
+# Create Plot with annotations and custom features
+ggplot(data, aes(Year, Population/1000000000)) +
+    geom_line(color = 'blue') +
+    ggtitle("World Population",
+            subtitle = "The World's population has more than doubled since 1960\nfrom about 3 billion to roughly 7 billion in 2010") +
+    labs(caption = "Source: Data Collected By Nathan Yau From World Bank",
+         y = "Population\n(Billions)") +
+    theme_classic() +
+    theme(legend.position = "none",
+          plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_x_continuous(breaks = seq(1960, 2010, 5)) +
+    scale_y_continuous(breaks = seq(2.5, 7, .5))
+```
+
+```{r}
+# Create Plot with annotations and custom features
+ggplot(data, aes(Year, Population/1000000000)) +
+    geom_step(color = 'blue') +
+    ggtitle("World Population",
+            subtitle = "The World's population has more than doubled since 1960\nfrom about 3 billion to roughly 7 billion in 2010") +
+    labs(caption = "Source: Data Collected By Nathan Yau From World Bank",
+         y = "Population\n(Billions)") +
+    theme_classic() +
+    theme(legend.position = "none",
+          plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_x_continuous(breaks=seq(1960, 2010, 5)) +
+    scale_y_continuous(breaks = seq(2.5, 7, .5))
+```
+
+
+
