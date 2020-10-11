@@ -1,0 +1,157 @@
+---
+title: "Young_DSC 640_Assignment 1.2_R"
+author: "Bret Young"
+date: "9/9/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    fig.align='center',
+    fig.pos='H',
+    fig.path = "plots/",
+    dev = c("png"),
+    dpi=500
+)
+```
+
+```{r}
+# load data
+file = 'expenditures.txt'
+data = read.delim(file, header = TRUE, sep = '\t')
+```
+
+
+```{r}
+# Print data
+head(data)
+```
+
+```{r}
+#import library
+library(dplyr)
+
+# group data and determine percentage
+data_grp = data %>% 
+    group_by(year) %>% 
+    mutate(Percent = 100*(expenditure/sum(expenditure)))
+```
+
+```{r}
+# Print data
+head(data_grp)
+```
+```{r}
+# Load library for plotting data
+library(ggplot2)
+
+# Create Plot and custom features
+ggplot(data_grp, aes(year, Percent, fill = category)) +
+    geom_area() +
+    ggtitle("Expenditure Percentages by Category 1984 - 2008",
+            subtitle = "The percent of money spent on different categories through the years\nshows how spending habits have changed.") +
+    labs(caption = "Source: Data Collected By Nathan Yau",
+         x = "",
+         y = "") +
+    theme_classic() +
+    theme(legend.position = "right",
+          plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_fill_manual(values = c("#7D26CD", "#DB70DB", "#990099", "#FF82AB", "#7D26CD", "#DB70DB", "#990099", "#FF82AB", "#7D26CD", "#DB70DB", "#990099", "#FF82AB", "#7D26CD", "#DB70DB")) +
+    scale_x_continuous(breaks = seq(1984, 2008, 2)) +
+    scale_y_continuous(labels = function(x) paste0(x, "%"))
+```
+
+```{r}
+# load data
+file_2 = "unemployement-rate-1948-2010.csv"
+data_2 = read.csv(file_2, header = TRUE)
+```
+
+```{r}
+head(data_2)
+```
+
+```{r}
+# load library
+library(stringr)
+
+# convert Periods to month names
+data_2$Month = month.abb[as.integer(str_remove(data_2$Period, "M"))]
+
+head(data_2)
+```
+
+```{r}
+# group data and determine mean
+data_2_grp = data_2 %>% 
+    group_by(Month) %>% 
+    mutate(Avg_val = mean(Value))
+```
+
+```{r}
+print(data_2_grp)
+```
+
+```{r}
+# separate data unto unique month and mean values only
+data_2_grp_1 = data_2_grp[5:6]
+print(unique(data_2_grp_1))
+```
+
+```{r}
+library(treemapify)
+
+# Create Plot with labels and custom features
+ggplot(unique(data_2_grp_1), aes(area = Avg_val, fill = Avg_val, label = paste0(as.character(Month), "\n", as.character(round(Avg_val, 2))))) +
+  geom_treemap(start = 'topleft', show.legend = FALSE) +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "topleft",
+                    grow = FALSE, start = 'topleft') + 
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7") +
+  ggtitle("Average Monthly Unemployment Rates 1948 - 2010",
+            subtitle = "Rates vary only slightly with the begining and end of thhe year having higher averages.") +
+  labs(caption = "Source: Data Collected By Nathan Yau from Bureau of Labor Statistics") +
+  theme(plot.title = element_text(face = "bold", size = 18),
+        plot.subtitle = element_text(color = "light gray"),
+        plot.caption = element_text(color = "light gray"),
+        ) 
+```
+
+```{r}
+# group data and determine average
+data_2_grp_year = data_2 %>% 
+    group_by(Year) %>% 
+    mutate(Avg_val = mean(Value))
+```
+
+```{r}
+# Create Plot selectin year and mean values only and custom features
+ggplot(unique(data_2_grp_year[, c(2,6)]), aes(Year, Avg_val)) +
+    geom_line(color = "blue") +
+    geom_area(fill = "lightblue") +
+    ggtitle("Expenditure Percentages by Category 1984 - 2008",
+            subtitle = "The percent of money spent on different categories through the years\nshows how spending habits have changed.") +
+    labs(caption = "Source: Data Collected By Nathan Yau",
+         x = "",
+         y = "") +
+    theme_classic() +
+    theme(legend.position = "right",
+          plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_x_continuous(breaks = seq(1948, 2010, 4))
+```
+
+
