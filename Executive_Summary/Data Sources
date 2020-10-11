@@ -1,0 +1,13 @@
+Below are the sources where the data was obtained from.
+
+airline-safety.csv - https://github.com/fivethirtyeight/data/tree/master/airline-safety
+
+Airplane Fatalities by Year 1918-2019.csv - http://www.baaa-acro.com/statistics/death-rate-per-year
+
+Airplane_Crashes_and_Fatalities_Since_1908.csv - https://data.world/youngb1801/air01/workspace/file?agentid=hhaveliw&datasetid=airplane-crashes-1908-2009&filename=Airplane_Crashes_and_Fatalities_Since_1908.csv
+
+Cars_94-18.csv - https://www-fars.nhtsa.dot.gov/Trends/TrendsGeneral.aspx
+
+Financials.pdf - https://www.airlines.org/dataset/annual-results-u-s-passenger-airlines/#
+
+Crude Oil Prices - https://www.kaggle.com/mabusalah/brent-oil-prices
