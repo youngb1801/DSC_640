@@ -1,0 +1,127 @@
+---
+title: "Young_DSC 640_Assignment 4.2_R"
+author: "Bret Young"
+date: "10/20/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    fig.align='center',
+    fig.pos='H',
+    fig.path = "plots/",
+    dev = c("png"),
+    dpi=500
+)
+```
+
+```{r}
+# load data
+file = 'crimerates-by-state-2005.csv'
+data = read.delim(file, header = TRUE, sep = ',')
+```
+
+```{r}
+# Print data
+head(data)
+```
+
+```{r}
+# Load library for transformation
+library(dplyr)
+
+# remove outlier; District of Columbia
+data_filter = data %>% filter(state != 'District of Columbia')
+```
+
+```{r}
+# Load library for plotting data
+library(ggplot2)
+
+# Create Plot and custom features
+ggplot(data_filter, aes(murder, burglary)) +
+    geom_point(color = 'light blue') +
+    geom_smooth(method = "loess", size = .7, se = FALSE) +
+    ggtitle("Murders Vs Burglaries For States in U.S.",
+            subtitle = "Higher muder rates are usually associated with higher burglary rates.") +
+    labs(caption = "Source: Data Collected By Nathan Yau from U.S. Census Bureau",
+         x = "Murders per 100,000 residents",
+         y = "Burglaries\nper 100,000\nresidents") +
+    theme_classic() +
+    theme(plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_x_continuous(breaks=seq(0, 10, 2), limits = c(0, 10)) +
+    scale_y_continuous(breaks=seq(0, 1300, 250), limits = c(0, 1300))
+```
+```{r}
+# remove outlier; District of Columbia
+data_filter_US = data_filter %>% filter(state != 'United States')
+```
+
+```{r}
+# Create Plot and custom features
+ggplot(data_filter_US, aes(murder, burglary)) +
+    geom_point(aes(size = population), color = 'light blue', alpha = 0.5) +
+    geom_text(data = data_filter_US %>% filter(population >= 3000000), aes(label = state), size = 1.5) +
+    ggtitle("Murders Vs Burglaries For States in U.S.",
+            subtitle = "Higher muder rates are usually associated with higher burglary rates.") +
+    labs(caption = "Source: Data Collected By Nathan Yau from U.S. Census Bureau",
+         x = "Murders per 100,000 residents",
+         y = "Burglaries\nper 100,000\nresidents") +
+    theme_classic() +
+    theme(plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_x_continuous(breaks=seq(0, 10, 2), limits = c(0, 10)) +
+    scale_y_continuous(breaks=seq(0, 1300, 250), limits = c(0, 1300)) +
+    scale_size(range = c(1, 20), name = "Population (M)")
+```
+
+
+```{r}
+# load data
+file_2 = "birth-rate.csv"
+data_2 = read.delim(file_2, header = TRUE, sep = ',')
+```
+
+```{r}
+head(data_2)
+```
+
+```{r}
+# Create Plot and custom features
+ggplot(data_2, aes(x = X2008)) +
+    geom_density(color = 'blue', fill = 'light blue', adjust = 1/3) +
+    ggtitle("Birthrate Density Plot for 2008") +
+    labs(caption = "Source: Data Collected By Nathan Yau from World Bank",
+         x = "Birth Rate",
+         y = "Density") +
+    theme_classic() +
+    theme(plot.title = element_text(face = "bold", size = 18),
+          plot.subtitle = element_text(color = "light gray"),
+          plot.caption = element_text(color = "light gray"),
+          axis.title.y = element_text(angle = 0),
+          ) +
+    scale_x_continuous(breaks=seq(0, 62, 2), limits = c(0, 62)) +
+    scale_y_continuous(breaks=seq(0, 0.075, .005), limits = c(0, 0.075))
+```
+
+
+
+
+
+
+
+
