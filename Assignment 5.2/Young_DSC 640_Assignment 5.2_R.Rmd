@@ -1,0 +1,134 @@
+---
+title: "Young_DSC 640_Assignment 5.2_R"
+author: "Bret Young"
+date: "11/07/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    fig.align='center',
+    fig.pos='H',
+    fig.path = "plots/",
+    dev = c("png"),
+    dpi=500
+)
+```
+
+```{r}
+# load data
+file = 'ppg2008.csv'
+data_1 = read.delim(file, header = TRUE, sep = ',')
+```
+
+```{r}
+# Print data
+head(data_1)
+```
+
+```{r, fig.height = 5, fig.width = 5}
+# Margins area
+par(oma=c(5,3,3,3)) # all sides have 3 lines of space
+par(mar=c(5,4,4,2) + 0.1)
+
+# load library
+library("RColorBrewer")
+
+row.names(data_1) = data_1$Name
+
+# set lables
+colnames(data_1)[2:21] = c('Games', 'Minutes', 'Points', 'Field Goals Made', 'Field Goal Attempts', 'Field Goal Percentage', 'Free Throws Made', 'Free Throw Attempts', 'Free Throw Percentage', 'Three-pointers made', 'Three-point Attempts', 'Three-point Percentage', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Steals', 'Blocks', 'Turnovers', 'Personal Fouls')
+
+# convert to matrix
+data_1_matrix = data.matrix(data_1[,2:21])
+
+heatmap(data_1_matrix, scale = "column", Colv = NA, Rowv = NA, main = "NBA Player Per Game Stats", col = brewer.pal(9,"Blues"))
+```
+
+```{r}
+# load data
+file_2 = 'costcos-geocoded.csv'
+data_2 = read.delim(file_2, header = TRUE, sep = ',')
+```
+
+```{r}
+# Print data
+head(data_2)
+```
+
+```{r}
+str(data_2)
+```
+
+```{r}
+# Load library for plotting data
+library(ggplot2)
+library(mapproj)
+library(maps)
+library(dplyr)
+
+# Get the USA map
+US = map_data("world") %>% filter(region == "USA")
+
+# Create Plot and custom features
+ggplot() +
+    geom_polygon(data = US, aes(x = long, y = lat, group = group), fill="grey", alpha=0.3) +
+    geom_point(data = data_2, aes(x = Longitude, y = Latitude), color = 'blue') +
+    theme_void() + 
+    xlim(-170, -55) +
+    ylim(15, 72) +
+    coord_map() +
+    ggtitle("Costco Locations In the United States") +
+    labs(caption = "Source: Data Collected By Nathan Yau") +
+    theme(plot.title = element_text(face = "bold", size = 18),
+          plot.caption = element_text(color = "light gray")
+          )
+```
+
+```{r}
+# import Library
+library(tidyverse)
+
+data("volcano")
+
+data_3 = as.data.frame(volcano) %>%
+            rownames_to_column() %>%
+            gather(key, value, -rowname) %>%
+            mutate(key = as.numeric(gsub("V", "", key)), rowname = as.numeric(rowname))
+```
+
+```{r}
+head(data_3)
+```
+
+```{r}
+# import Library
+library(directlabels)
+
+ggplot(data_3) + 
+      geom_contour_filled(aes(x = rowname,
+                   y = key,
+                   z = value,
+                   colour = ..level..)) +
+      scale_colour_brewer(palette = 'Blues') +
+      scale_fill_brewer(palette = "Blues", direction = -1) +
+      ggtitle("Valcano Elevation Plot") +
+      labs(caption = "Source: Data is loaded from R volcano dataset",
+          x = "",
+          y = "") +
+      theme_classic() +
+      theme(plot.title = element_text(face = "bold", size = 18),
+            plot.subtitle = element_text(color = "light gray"),
+            plot.caption = element_text(color = "light gray")
+            ) +
+      guides(x = "none", y = "none")
+
+```
+
