@@ -1,0 +1,150 @@
+---
+title: "Young_DSC 640_Assignment 6.2_R"
+author: "Bret Young"
+date: "11/12/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    fig.align='center',
+    fig.pos='H',
+    fig.path = "plots/",
+    dev = c("png"),
+    dpi=500
+)
+```
+
+```{r}
+# load data
+file_1 = 'birth-rate.csv'
+data_1 = read.delim(file_1, header = TRUE, sep = ',')
+```
+
+```{r}
+# Print data
+head(data_1)
+```
+```{r}
+# load library
+library(tidyverse)
+
+# Select 2000 thru 2008
+data_1_filtered = data_1[,(ncol(data_1)-8):ncol(data_1)]
+
+# convert data to long form
+data_1_filtered = gather(data_1_filtered)
+
+# remove 'X' from year names
+data_1_filtered = data_1_filtered %>% mutate(key = gsub("X", "", key))
+
+head(data_1_filtered)
+```
+
+```{r}
+# load library
+library(ggplot2)
+
+# create histograms for 2000 thru 2008
+ggplot(data_1_filtered, aes(value)) + 
+  geom_histogram(fill="blue", color="black") + 
+  facet_wrap(~key) +
+  ggtitle("Live Births per 1,000 Population") +
+  labs(caption = "Source: Data Collected by Nathan Yau from The World Bank",
+      x = "Rate",
+      y = "Count") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold", size = 18),
+        plot.subtitle = element_text(color = "light gray"),
+        plot.caption = element_text(color = "light gray")
+        )
+```
+
+```{r}
+# load data
+file_2 = 'education.csv'
+data_2 = read.delim(file_2, header = TRUE, sep = ',')
+```
+
+```{r}
+# Print data
+head(data_2)
+```
+
+```{r}
+# load library
+library(reshape2)
+library(dplyr)
+
+# filter data to columns needed and remove US
+data_2_filtered = data_2[, 1:4] %>% filter(!grepl('United States', state))
+
+# melt data to make three boxplots
+data_2_melt = melt(data_2_filtered, id.var = "state")
+```
+
+```{r}
+head(data_2_melt)
+```
+
+```{r}
+# create boxplots
+ggplot(data_2_melt, aes(x = variable, y = value)) +
+  geom_point(alpha = 0.4) +
+  geom_boxplot(fill="gray") + 
+  ggtitle("SAT Category Scores in the United States") +
+  labs(caption = "Source: Data Collected by Nathan Yau from National Center for Education Statistics",
+       subtitle = "Reading and Math median scores, 523 and 525 respectively,\nare similar while Writting scores are lower with a median of 510.",
+       x = "Categories",
+       y = "Scores") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold", size = 18),
+        plot.subtitle = element_text(color = "light gray"),
+        plot.caption = element_text(color = "light gray")
+        )
+```
+
+```{r}
+data_2_sat = data_2 %>% filter(state == 'United States')
+
+data_2_sat['Total_SAT_Score'] = round((data_2_sat['math'] + data_2_sat['reading'] + data_2_sat['writing']) * (2/3), 0)
+
+# set SAT percentile values
+data_2_sat['sat_49'] = 1050
+data_2_sat['sat_50'] = 1070
+data_2_sat['sat_74'] = 1200
+data_2_sat['sat_91'] = 1350
+
+head(data_2_sat)
+```
+
+```{r}
+# create boxplots
+ggplot(data_2_sat) +
+  geom_col(aes(x = state, y = 1600), color = 'light gray', fill = 'white', width = 0.25) +
+  geom_col(aes(x = state, y = sat_91), color = 'light gray', fill = 'light gray', width = 0.25) +
+  geom_col(aes(x = state, y = sat_74), color = 'gray', fill = 'gray', width = 0.25) +
+  geom_col(aes(x = state, y = sat_49), color = 'dark gray', fill = 'dark gray', width = 0.25) +
+  geom_col(aes(x = state, y = Total_SAT_Score), color = 'dark blue', fill = 'dark blue', width = 0.07) +
+  geom_segment(aes(x = 0.875, y = 1070), xend = 1.125, yend = 1070, color = 'red', ) +
+  coord_flip() +
+  ggtitle("United States SAT Scores") +
+  labs(caption = "Source: Data Collected by Nathan Yau from National Center for Education Statistics",
+      subtitle = "The target value is 1070 or thhe 50th percentile.  We can see the average\nfor the United States falls below target",
+       x = "",
+       y = "Total SAT Score") +
+  theme_classic() +
+  theme(plot.title = element_text(face = "bold", size = 18),
+        plot.subtitle = element_text(color = "light gray"),
+        plot.caption = element_text(color = "light gray")
+        ) + 
+   scale_y_continuous(breaks = seq(0, 1600, 100), limits = c(0, 1620))
+
+```
